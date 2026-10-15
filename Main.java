@@ -5,11 +5,14 @@ class Room {
     private String type;
     private double rate;
     private boolean booked;
+    private int capacity;
 
-    public Room(int roomNo, String type, double rate) {
+    public Room(int roomNo, String type,
+                double rate, int capacity) {
         this.roomNo = roomNo;
         this.type = type;
         this.rate = rate;
+        this.capacity = capacity;
         this.booked = false;
     }
 
@@ -25,6 +28,10 @@ class Room {
         return rate;
     }
 
+    public int getCapacity() {
+        return capacity;
+    }
+
     public boolean isBooked() {
         return booked;
     }
@@ -35,15 +42,28 @@ class Room {
 }
 
 class Guest {
+
     private String guestId;
     private String name;
+    private String phone;
+    private String address;
     private int roomNo;
+    private int daysStayed;
     private double foodCharges;
 
-    public Guest(String guestId, String name, int roomNo) {
+    public Guest(String guestId,
+                 String name,
+                 String phone,
+                 String address,
+                 int roomNo,
+                 int daysStayed) {
+
         this.guestId = guestId;
         this.name = name;
+        this.phone = phone;
+        this.address = address;
         this.roomNo = roomNo;
+        this.daysStayed = daysStayed;
         this.foodCharges = 0;
     }
 
@@ -55,8 +75,20 @@ class Guest {
         return name;
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
     public int getRoomNo() {
         return roomNo;
+    }
+
+    public int getDaysStayed() {
+        return daysStayed;
     }
 
     public double getFoodCharges() {
@@ -75,22 +107,35 @@ class HotelManager {
 
     private int guestCount;
     private int nextId;
+
     private double revenue;
 
     Scanner sc = new Scanner(System.in);
 
-    String[] foodItems = {"Burger", "Fries", "Soda", "Pizza"};
-    double[] foodPrices = {450, 200, 150, 800};
+    String[] foodItems =
+            {"Burger", "Fries", "Soda", "Pizza"};
+
+    double[] foodPrices =
+            {450, 200, 150, 800};
 
     public HotelManager() {
 
         rooms = new Room[5];
 
-        rooms[0] = new Room(101, "Single", 1000);
-        rooms[1] = new Room(102, "Double", 1500);
-        rooms[2] = new Room(103, "Double", 1500);
-        rooms[3] = new Room(201, "Single", 1000);
-        rooms[4] = new Room(202, "Suite", 3000);
+        rooms[0] = new Room(101,
+                "Single", 1000, 1);
+
+        rooms[1] = new Room(102,
+                "Double", 1500, 2);
+
+        rooms[2] = new Room(103,
+                "Double", 1500, 2);
+
+        rooms[3] = new Room(201,
+                "Single", 1000, 1);
+
+        rooms[4] = new Room(202,
+                "Suite", 3000, 4);
 
         guests = new Guest[50];
 
@@ -102,26 +147,31 @@ class HotelManager {
     private int findRoom(int roomNo) {
 
         for (int i = 0; i < rooms.length; i++) {
-            if (rooms[i].getRoomNo() == roomNo) {
+
+            if (rooms[i].getRoomNo() == roomNo)
                 return i;
-            }
         }
+
         return -1;
     }
 
     private int findGuest(String guestId) {
 
         for (int i = 0; i < guestCount; i++) {
-            if (guests[i].getGuestId().equals(guestId)) {
+
+            if (guests[i]
+                    .getGuestId()
+                    .equals(guestId))
                 return i;
-            }
         }
+
         return -1;
     }
 
     public void displayRooms() {
 
-        System.out.println("\nRoom No\tType\tRate\tStatus");
+        System.out.println(
+                "\nRoomNo\tType\tRate\tCapacity\tStatus");
 
         for (Room room : rooms) {
 
@@ -133,10 +183,11 @@ class HotelManager {
                 status = "Available";
 
             System.out.println(
-                room.getRoomNo() + "\t" +
-                room.getType() + "\t" +
-                room.getRate() + "\t" +
-                status
+                    room.getRoomNo() + "\t" +
+                            room.getType() + "\t" +
+                            room.getRate() + "\t" +
+                            room.getCapacity() + "\t\t" +
+                            status
             );
         }
     }
@@ -145,229 +196,241 @@ class HotelManager {
 
         displayRooms();
 
-        System.out.print("\nEnter Room Number: ");
+        System.out.print(
+                "\nEnter Room Number: ");
+
         int roomNo = sc.nextInt();
         sc.nextLine();
 
         int roomIndex = findRoom(roomNo);
 
-        if (roomIndex == -1 || rooms[roomIndex].isBooked()) {
-            System.out.println("Room not available!");
+        if (roomIndex == -1 ||
+                rooms[roomIndex].isBooked()) {
+
+            System.out.println(
+                    "Room Not Available!");
             return;
         }
 
-        System.out.print("Enter Guest Name: ");
+        System.out.print(
+                "Enter Guest Name: ");
         String name = sc.nextLine();
+
+        System.out.print(
+                "Enter Phone Number: ");
+        String phone = sc.nextLine();
+
+        System.out.print(
+                "Enter Address: ");
+        String address = sc.nextLine();
+
+        System.out.print(
+                "Enter Number of Days: ");
+        int days = sc.nextInt();
 
         String guestId = "G" + nextId++;
 
         guests[guestCount] =
-                new Guest(guestId, name, roomNo);
+                new Guest(
+                        guestId,
+                        name,
+                        phone,
+                        address,
+                        roomNo,
+                        days
+                );
 
         guestCount++;
 
-        rooms[roomIndex].setBooked(true);
+        rooms[roomIndex]
+                .setBooked(true);
 
-        System.out.println("\nCheck-In Successful");
-        System.out.println("Guest ID: " + guestId);
+        System.out.println(
+                "\nCheck-In Successful");
+
+        System.out.println(
+                "Guest ID : " + guestId);
     }
 
     public void orderFood() {
 
-        System.out.print("Enter Guest ID: ");
+        System.out.print(
+                "Enter Guest ID: ");
+
         String guestId = sc.next();
 
-        int guestIndex = findGuest(guestId);
+        int guestIndex =
+                findGuest(guestId);
 
         if (guestIndex == -1) {
-            System.out.println("Guest not found!");
+
+            System.out.println(
+                    "Guest Not Found!");
             return;
         }
 
-        System.out.println("\n------ FOOD MENU ------");
+        System.out.println(
+                "\n----- FOOD MENU -----");
 
-        for (int i = 0; i < foodItems.length; i++) {
+        for (int i = 0;
+             i < foodItems.length;
+             i++) {
 
             System.out.println(
-                    (i + 1) + ". " +
-                    foodItems[i] +
-                    " - Rs." +
-                    foodPrices[i]
-            );
+                    (i + 1)
+                            + ". "
+                            + foodItems[i]
+                            + " - Rs."
+                            + foodPrices[i]);
         }
 
         while (true) {
 
-            System.out.print("Enter Item Number (0 to Exit): ");
-            int choice = sc.nextInt();
+            System.out.print(
+                    "Enter Item Number (0 Exit): ");
+
+            int choice =
+                    sc.nextInt();
 
             if (choice == 0)
                 break;
 
-            if (choice < 1 || choice > 4) {
-                System.out.println("Invalid Item!");
+            if (choice < 1 ||
+                    choice > 4) {
+
+                System.out.println(
+                        "Invalid Item!");
                 continue;
             }
 
-            System.out.print("Enter Quantity: ");
-            int qty = sc.nextInt();
+            System.out.print(
+                    "Enter Quantity: ");
 
-            double cost = foodPrices[choice - 1] * qty;
+            int qty =
+                    sc.nextInt();
 
-            guests[guestIndex].addFoodCharges(cost);
+            double cost =
+                    foodPrices[
+                            choice - 1]
+                            * qty;
 
-            System.out.println("Added. Cost = Rs." + cost);
+            guests[guestIndex]
+                    .addFoodCharges(cost);
+
+            System.out.println(
+                    "Added. Cost = Rs."
+                            + cost);
         }
+    }
+
+    public void searchGuest() {
+
+        System.out.print(
+                "Enter Guest ID: ");
+
+        String id =
+                sc.next();
+
+        int index =
+                findGuest(id);
+
+        if (index == -1) {
+
+            System.out.println(
+                    "Guest Not Found");
+            return;
+        }
+
+        Guest g =
+                guests[index];
+
+        System.out.println(
+                "\nGuest Details");
+
+        System.out.println(
+                "ID : " +
+                        g.getGuestId());
+
+        System.out.println(
+                "Name : " +
+                        g.getName());
+
+        System.out.println(
+                "Phone : " +
+                        g.getPhone());
+
+        System.out.println(
+                "Address : " +
+                        g.getAddress());
+
+        System.out.println(
+                "Room No : " +
+                        g.getRoomNo());
     }
 
     public void checkOut() {
 
-        System.out.print("Enter Guest ID: ");
-        String guestId = sc.next();
+        System.out.print(
+                "Enter Guest ID: ");
 
-        int guestIndex = findGuest(guestId);
+        String guestId =
+                sc.next();
+
+        int guestIndex =
+                findGuest(guestId);
 
         if (guestIndex == -1) {
-            System.out.println("Guest not found!");
+
+            System.out.println(
+                    "Guest Not Found!");
             return;
         }
 
-        Guest guest = guests[guestIndex];
+        Guest guest =
+                guests[guestIndex];
 
-        int roomIndex = findRoom(guest.getRoomNo());
+        int roomIndex =
+                findRoom(
+                        guest.getRoomNo());
 
         double roomBill =
-                rooms[roomIndex].getRate() * 3;
+                rooms[roomIndex].getRate()
+                        * guest.getDaysStayed();
 
-        double totalBill =
-                roomBill + guest.getFoodCharges();
+        double subtotal =
+                roomBill
+                        + guest.getFoodCharges();
 
-        System.out.println("\n===== FINAL BILL =====");
+        double discount = 0;
 
-        System.out.println(
-                "Guest Name: " +
-                guest.getName());
+        if (subtotal > 10000)
+            discount =
+                    subtotal * 0.10;
 
-        System.out.println(
-                "Room Charges: Rs." +
-                roomBill);
+        double afterDiscount =
+                subtotal - discount;
 
-        System.out.println(
-                "Food Charges: Rs." +
-                guest.getFoodCharges());
+        double gst =
+                afterDiscount * 0.18;
 
-        System.out.println(
-                "Total Bill: Rs." +
-                totalBill);
-
-        revenue += totalBill;
-
-        rooms[roomIndex].setBooked(false);
-
-        for (int i = guestIndex;
-             i < guestCount - 1;
-             i++) {
-
-            guests[i] = guests[i + 1];
-        }
-
-        guestCount--;
-
-        System.out.println("Check-Out Successful");
-    }
-
-    public void viewGuests() {
-
-        if (guestCount == 0) {
-            System.out.println("No Guests Available.");
-            return;
-        }
-
-        for (int i = 0; i < guestCount; i++) {
-
-            System.out.println("\nGuest ID: "
-                    + guests[i].getGuestId());
-
-            System.out.println("Name: "
-                    + guests[i].getName());
-
-            System.out.println("Room No: "
-                    + guests[i].getRoomNo());
-
-            System.out.println("Food Charges: Rs."
-                    + guests[i].getFoodCharges());
-        }
-    }
-
-    public void viewRevenue() {
+        double finalBill =
+                afterDiscount + gst;
 
         System.out.println(
-                "\nTotal Revenue Collected: Rs."
-                        + revenue);
-    }
-}
+                "\n=========== HOTEL BILL ===========");
 
-public class Main {
+        System.out.println(
+                "Guest ID      : "
+                        + guest.getGuestId());
 
-    public static void main(String[] args) {
+        System.out.println(
+                "Guest Name    : "
+                        + guest.getName());
 
-        Scanner sc = new Scanner(System.in);
+        System.out.println(
+                "Room Number   : "
+                        + guest.getRoomNo());
 
-        HotelManager hotel =
-                new HotelManager();
-
-        int choice;
-
-        do {
-
-            System.out.println("\n===== HOTEL MANAGEMENT SYSTEM =====");
-            System.out.println("1. Display Rooms");
-            System.out.println("2. Check In");
-            System.out.println("3. Check Out");
-            System.out.println("4. View Guests");
-            System.out.println("5. Order Food");
-            System.out.println("6. View Revenue");
-            System.out.println("7. Exit");
-
-            System.out.print("Enter Choice: ");
-            choice = sc.nextInt();
-
-            switch (choice) {
-
-                case 1:
-                    hotel.displayRooms();
-                    break;
-
-                case 2:
-                    hotel.checkIn();
-                    break;
-
-                case 3:
-                    hotel.checkOut();
-                    break;
-
-                case 4:
-                    hotel.viewGuests();
-                    break;
-
-                case 5:
-                    hotel.orderFood();
-                    break;
-
-                case 6:
-                    hotel.viewRevenue();
-                    break;
-
-                case 7:
-                    System.out.println("Thank You!");
-                    break;
-
-                default:
-                    System.out.println("Invalid Choice!");
-            }
-
-        } while (choice != 7);
-
-        sc.close();
-    }
-}
+        System.out.println(
+                "Days Stayed   : "
+                        + 
